@@ -1,5 +1,5 @@
 # TODO
 
-- [ ] Train with all dataset
+- [x] Train with all dataset
 - [ ] Use structured embeddings
-- [ ] Create num features for ordinal variables
+- [x] Create num features for ordinal variables
