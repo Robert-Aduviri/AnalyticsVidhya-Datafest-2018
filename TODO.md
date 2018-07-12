@@ -6,4 +6,5 @@
 - [ ] Tune Catboost
 - [ ] Bayesian Optimization
 - [ ] Fill nan
+- [ ] Extract embeddings, PCA and catboost / linear model
 - [ ] L-BFGS optimizer
