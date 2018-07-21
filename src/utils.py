@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import roc_auc_score
 
 #### PREPROCESSING ####
 
@@ -102,6 +103,40 @@ def eval_catboost(model, X, y, kfolds):
     print()
     return trn_aucs, val_aucs
 
+def eval_gbm(model, X, y, kfolds):
+    trn_aucs, val_aucs = [], []
+    for trn_idx, val_idx in kfolds.split(X, y):
+        X_val, y_val = X.iloc[val_idx], y.iloc[val_idx]
+        X_trn, y_trn = X.iloc[trn_idx], y.iloc[trn_idx]
+        model.fit(X_trn, y_trn, eval_set=[(X_val, y_val)],
+                  early_stopping_rounds=30, eval_metric='auc',
+                  verbose=False)
+        y_trn_pred = model.predict_proba(X_trn)[:,1]
+        y_val_pred = model.predict_proba(X_val)[:,1]
+        trn_aucs.append(roc_auc_score(y_trn, y_trn_pred))
+        val_aucs.append(roc_auc_score(y_val, y_val_pred))
+        print(f'No. estimators: {model.best_iteration_} | '
+              f'Train AUC: {100*trn_aucs[-1]:.2f} | '
+              f'Val AUC: {100*val_aucs[-1]:.2f}')
+    print()
+    return trn_aucs, val_aucs
+
+def eval_tree(model, X, y, kfolds):
+    trn_aucs, val_aucs = [], []
+    for trn_idx, val_idx in kfolds.split(X, y):
+        X_val, y_val = X.iloc[val_idx], y.iloc[val_idx]
+        X_trn, y_trn = X.iloc[trn_idx], y.iloc[trn_idx]
+        model.fit(X_trn, y_trn)
+        y_trn_pred = model.predict_proba(X_trn)[:,1]
+        y_val_pred = model.predict_proba(X_val)[:,1]
+        trn_aucs.append(roc_auc_score(y_trn, y_trn_pred))
+        val_aucs.append(roc_auc_score(y_val, y_val_pred))
+        print(f'Train AUC: {100*trn_aucs[-1]:.2f} | '
+              f'Val AUC: {100*val_aucs[-1]:.2f}')
+    print()
+    return trn_aucs, val_aucs
+        
 def print_results(trn_aucs, val_aucs):
     print(f'{100*np.mean(trn_aucs):.2f} +/- {200*np.std(trn_aucs):.2f} | '
           f'{100*np.mean(val_aucs):.2f} +/- {200*np.std(val_aucs):.2f}')
+    
