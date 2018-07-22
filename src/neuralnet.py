@@ -106,6 +106,11 @@ def train_model(model, train_loader, val_loader, optimizer, criterion,
                   f'Val AUC: {100*val_auc:.2f}')
             val_auc_scores.append(val_auc)
             
+        else:
+            train_auc = get_metrics(model, train_loader, USE_CUDA)
+            print(f'Epoch: {epoch+1} | Train AUC: {100*train_auc:.2f}')
+            
         torch.save(model.state_dict(), f'data/neuralnet/model_e{epoch}.pt')    
         
-    return max(range(len(val_auc_scores)), key=lambda x: val_auc_scores[x])
+    return max(range(len(val_auc_scores)), key=lambda x: val_auc_scores[x]) \
+            if val_loader is not None else n_epochs

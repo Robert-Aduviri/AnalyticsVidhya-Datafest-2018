@@ -127,7 +127,7 @@ def test_sklearn(model, X, y, X_test, kfolds):
 
 def test_neuralnet(X, y, X_test, kfolds, cat_cols, num_cols, USE_CUDA=False):
     cat_szs = [int(X[col].max() + 1) for col in cat_cols]
-    emb_szs = [(c, min(50, (c+1)//2)) for c in cat_szs]
+    emb_szs = [(c, min(20, (c+1)//2)) for c in cat_szs]
     trn_aucs, val_aucs = [], []
     y_pred = np.zeros(len(X))
     y_test = np.zeros(len(X_test))
@@ -138,10 +138,10 @@ def test_neuralnet(X, y, X_test, kfolds, cat_cols, num_cols, USE_CUDA=False):
         X_val, y_val = X.iloc[val_idx], y.iloc[val_idx]
         X_trn, y_trn = X.iloc[trn_idx], y.iloc[trn_idx]
         
-        model = StructuredNet(emb_szs, n_cont=len(num_cols), emb_drop=0.2,
-                      szs=[1000,500], drops=[0.5, 0.5])
+        model = StructuredNet(emb_szs, n_cont=len(num_cols), emb_drop=0.4,
+                      szs=[300,100], drops=[0.5, 0.5])
         if USE_CUDA: model = model.cuda()
-        optimizer = optim.Adam(model.parameters(), lr=1e-3)
+        optimizer = optim.Adam(model.parameters(), lr=3e-4)
         criterion = nn.BCEWithLogitsLoss()
         
         train_dl = DataLoader(StructuredDataset(
@@ -152,7 +152,7 @@ def test_neuralnet(X, y, X_test, kfolds, cat_cols, num_cols, USE_CUDA=False):
                         batch_size=32)
     
         best_epoch = train_model(model, train_dl, val_dl, optimizer, criterion,
-                    n_epochs=7, USE_CUDA=USE_CUDA)    
+                    n_epochs=20, USE_CUDA=USE_CUDA)    
         model.load_state_dict(torch.load(f'data/neuralnet/model_e{best_epoch}.pt'))
         
         train_dl = DataLoader(StructuredDataset(
