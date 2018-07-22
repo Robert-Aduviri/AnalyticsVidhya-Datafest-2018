@@ -154,7 +154,7 @@ def eval_lgbm(lgbm, X, y, kfolds, cat_features):
     print()
     return trn_aucs, val_aucs
 
-def eval_tree(model, X, y, kfolds):
+def eval_sklearn(model, X, y, kfolds):
     trn_aucs, val_aucs = [], []
     for trn_idx, val_idx in kfolds.split(X, y):
         X_val, y_val = X.iloc[val_idx], y.iloc[val_idx]
@@ -210,7 +210,7 @@ def eval_neuralnet(X, y, kfolds, cat_cols, num_cols, USE_CUDA=False):
     return trn_aucs, val_aucs
     
 def print_results(trn_aucs, val_aucs):
-    print(f'{100*np.mean(trn_aucs):.2f} +/- {200*np.std(trn_aucs):.2f} | '
-          f'{100*np.mean(val_aucs):.2f} +/- {200*np.std(val_aucs):.2f}')
+    print(f'Train AUC: {100*np.mean(trn_aucs):.2f} +/- {200*np.std(trn_aucs):.2f} | '
+          f'Val AUC: {100*np.mean(val_aucs):.2f} +/- {200*np.std(val_aucs):.2f}')
     
 
