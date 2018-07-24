@@ -5,7 +5,7 @@
 - [x] Create num features for ordinal variables
 - [x] Tune Catboost
 - [ ] Bayesian Optimization
-- [ ] Fill nan
-- [ ] Extract embeddings, PCA and catboost / linear model
+- [x] Fill nan
+- [x] Extract embeddings, PCA and catboost / linear model
 - [ ] L-BFGS optimizer
-- [ ] Train with all data
+- [x] Train with all data
